@@ -1,0 +1,43 @@
+const { MessageEmbed } = require('discord.js')
+const firebase = require('firebase')
+const database = firebase.database()
+const config = require('../../config.json')
+
+module.exports = {
+   run: async function (client, message, args) {
+    try {
+    //<!-- Coletamos o prefixo do servidor --!>
+    let prefixoColeta = await database.ref(`Configurações/Servidores/${message.guild.id}/Prefixo`)
+    let prefixoColeta2 = await prefixoColeta.once('value')
+    let prefixo = prefixoColeta2.val().prefixo
+    //<!-- Coletamos os dados do servidor --!>
+    let ref = await database.ref(`Economia/Servidor/${message.guild.id}/Registros/Usuário/${message.author.id}`)
+    let snap = await ref.once('value') 
+    //<!-- Se os dados não existirem, o Zyon vai criá-los --!>
+    if(snap.val() == null){
+        return message.channel.send(`<a:erro:809516073799122945> | Olá ${message.author}, por gentileza, utilze o comando \`${prefixo}registrar\` e use o comando de novo!`)
+      }
+      const mConvite = new MessageEmbed()
+      .setTitle("🙋‍♂️ Vote em mim")
+      .setDescription("Olá **"+ message.author.username +"**, obrigado por utilizar este comando! Informações de como votar em mim abaixo:")
+      .setAuthor(message.author.tag, message.author.avatarURL({ dynamic: true }))
+      .addField("<:zuraaa:796575946655399946> | zuraaa.com", `Para votar em mim no site **Bots Para Discord**, [clique aqui](https://www.zuraaa.com/bots/664292486990004262/votar)!\n• Tempo de duração entre votos: 8 horas.`)
+      .addField("<:topgg:796216394399612958> | top.gg", `Para votar em mim no site **Discord Bot List**, [clique aqui](https://top.gg/bot/664292486990004262)!\n• Tempo de duração entre votos: 12 horas.`)
+      .addField("<:discordbotlist:726522923476582440> | discordbotlist.com", `Para votar em mim no site **Discord Bot List** (sim, eles tem o mesmo nome), [clique aqui](https://discordbotlist.com/bots/Zyontm)!\n• Tempo de duração entre votos: 12 horas.`)
+      //Removido
+      .setFooter('Zyon™ ® Oficial 2020', client.user.avatarURL())
+      message.channel.send(mConvite)
+    //<!-- Aqui, definimos o nome do comando e suas configurações --!>
+    } catch (e) {
+        const erroCanal = client.channels.get('733875381131673661')
+        message.channel.send(`<a:erro:809516073799122945> | **${message.author.username}**, encontrei um erro neste comando e minha equipe foi acionada!`)
+        erroCanal.send(`**Erro encontrado:**\n\`${e}\`\n• Servidor: ${message.guild.name} (${message.guild.id})\n• Comando: \`\``)
+    }
+},
+    conf: {},
+    get help () {
+      return {
+        name: 'votar'
+      }
+      }
+    }
